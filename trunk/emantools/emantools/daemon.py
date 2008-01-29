@@ -7,7 +7,10 @@ import time
 import datetime
 import create_daemon
 
+
 PIDFILE = '/var/run/start-stop.pid'
+LOGDIR = '/var/log'
+
 
 def logit():
     fp = open('test.log','a')
@@ -16,16 +19,18 @@ def logit():
     fp.write(str(current_time) + '\n')
     fp.close()
 
+
 class Daemon(object):
     interval = 5
-    pidfile = PIDFILE
+    pid_file = PIDFILE
+    log_dir = LOGDIR
 
     def __init__(self):
         self.main()
 
     def get_running_pid(self):
         try:
-            fp = open(self.pidfile, 'r')
+            fp = open(self.pid_file, 'r')
         except IOError:
             return None
         self.pid = fp.read()
@@ -33,7 +38,7 @@ class Daemon(object):
         return self.pid
 
     def write_pid(self):
-        fp = open(self.pidfile, 'w')
+        fp = open(self.pid_file, 'w')
         fp.write(str(os.getpid()))
         fp.close()
         return True
@@ -74,7 +79,7 @@ class Daemon(object):
             os.kill(int(pid), 15)
         except OSError:
             pass
-        os.unlink(self.pidfile)
+        os.unlink(self.pid_file)
         return True
 
     def restart(self):
