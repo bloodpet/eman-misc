@@ -27,9 +27,9 @@ if __name__ == '__main__':
 
 Options for running:
 {{{
-#./run-daemon.py start
-#./run-daemon.py stop
-#./run-daemon.py status
+# ./run-daemon.py start
+# ./run-daemon.py stop
+# ./run-daemon.py status
 }}}
 
 == Details ==
