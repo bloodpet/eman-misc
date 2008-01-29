@@ -87,7 +87,11 @@ class Daemon(object):
         return self.start()
 
     def print_usage(self):
-        print 'WRONG'
+        print '''USAGE:
+        %(script)s start|stop|status|help
+        ''' % dict(
+                script = self.filename,
+            )
 
     def main(self):
         self.filename = sys.argv[0]
