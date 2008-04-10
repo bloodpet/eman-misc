@@ -3,6 +3,7 @@
 
 import os
 import sys
+import logging
 import time
 import datetime
 import create_daemon
@@ -24,6 +25,7 @@ class Daemon(object):
     interval = 5
     pid_file = PIDFILE
     log_dir = LOGDIR
+    log_file = '/dev/null'
 
     def __init__(self):
         self.main()
@@ -36,6 +38,19 @@ class Daemon(object):
         self.pid = fp.read()
         fp.close()
         return self.pid
+
+    def init_log(self):
+        logging.basicConfig()
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+        handler = logging.FileHandler(self.log_file)
+        fmt = '[%(asctime)s] %(name)s %(levelname)s: %(message)s'
+        handler.setFormatter(logging.Formatter(fmt))
+        logging.root.addHandler(handler)
+        logging.root.setLevel(logging.DEBUG)
+        self.log = logging.getLogger("Daemon")
+        self.log.info("Log started")
+        return self.log
 
     def write_pid(self):
         fp = open(self.pid_file, 'w')
@@ -63,6 +78,7 @@ class Daemon(object):
             print 'Daemon already started.'
             return False
         create_daemon.createDaemon()
+        self.log.info('Daemon Started')
         self.write_pid()
         while True:
             time.sleep(self.interval)
@@ -95,6 +111,7 @@ class Daemon(object):
 
     def main(self):
         self.filename = sys.argv[0]
+        self.init_log()
         try:
             command = sys.argv[1]
         except IndexError:
